@@ -13,7 +13,7 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 cat out/entry.txt
 ```
 
-The program checks its own output before writing: exactly 6 words, 1–60 characters, a single non-blank line of valid UTF-8.
+The program checks its own output before writing — exactly 6 words, 1–60 characters, a single non-blank line of valid UTF-8 — then reads the file back and re-validates it.
 
 ---
 

@@ -3,7 +3,7 @@
 // /output/entry.txt. The story is fixed: two short sentences, a woman who
 // faked her own death and then showed up at her own funeral — the turn is
 // that she is alive, watching the mourners. The text is written with no
-// trailing newline, so the file holds exactly the story, 39 characters.
+// trailing newline, so the file holds exactly the story, 38 characters.
 //
 // Gate check (mirrors the sealed scorer): the output must be UTF-8 text of
 // 1 to 60 characters, not only white space — and this competition's brief
@@ -13,7 +13,7 @@
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
@@ -45,4 +45,13 @@ function validate(text: string): void {
 
 validate(STORY);
 mkdirSync(OUTPUT_DIR, { recursive: true });
-writeFileSync(join(OUTPUT_DIR, 'entry.txt'), STORY, 'utf8');
+const entryPath = join(OUTPUT_DIR, 'entry.txt');
+writeFileSync(entryPath, STORY, 'utf8');
+
+// Read-back verification: the file on disk must hold exactly the story
+// that passed validation — a second, independent gate on the written bytes.
+const written = readFileSync(entryPath, 'utf8');
+if (written !== STORY) {
+  throw new Error('read-back mismatch: entry.txt does not hold the story');
+}
+validate(written);
